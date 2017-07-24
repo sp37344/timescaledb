@@ -64,7 +64,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	elems[bucket] = elems[bucket] + 1;
 
 	//create return array 
-	state = construct_array(elems, nbuckets, INT4OID, sizeof(int4), false, 'i'); 
+	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
