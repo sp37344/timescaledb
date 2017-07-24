@@ -69,18 +69,19 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	else {
 		//deconstruct
-		Oid    	i_eltype, s_eltype, o_eltype;
-	    int16  	i_typlen, o_typlen;
-	    bool   	i_typbyval, o_typbyval;
-	    char   	i_typalign, o_typalign;
+		Oid    	i_eltype;
+	    int16  	i_typlen;
+	    bool   	i_typbyval;
+	    char   	i_typalign;
 	    int 	n;
-    
+	    bool 	*nulls;
+
 		/* get input array element type */
 		i_eltype = ARR_ELEMTYPE(state);
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
 		//deconstruct array 
-		elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &i_data, &nulls, &n);
+		elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &, &n);
 	}
 	
 	//increment state
@@ -88,7 +89,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	//create return array 
 	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
-
+nulls
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
 }
