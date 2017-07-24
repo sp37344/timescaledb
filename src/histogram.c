@@ -67,22 +67,22 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	}
 
 
-	else {
-		//deconstruct
-		Oid    	i_eltype;
-	    int16  	i_typlen;
-	    bool   	i_typbyval;
-	    char   	i_typalign;
-	    int 	n;
-	    bool 	*nulls;
+	// else {
+	// 	//deconstruct
+	// 	Oid    	i_eltype;
+	//     int16  	i_typlen;
+	//     bool   	i_typbyval;
+	//     char   	i_typalign;
+	//     int 	n;
+	//     bool 	*nulls;
 
-		/* get input array element type */
-		i_eltype = ARR_ELEMTYPE(state);
-		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
+	// 	/* get input array element type */
+	// 	i_eltype = ARR_ELEMTYPE(state);
+	// 	get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
-		//deconstruct array 
-		elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
-	}
+	// 	//deconstruct array 
+	// 	elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
+	// }
 	
 	//increment state
 	elems[bucket] = elems[bucket] + 1;
