@@ -75,12 +75,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	}
 
 
-	/* get input array element type */
-	i_eltype = ARR_ELEMTYPE(state);
-	get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
-
-
 	else {
+		/* get input array element type */
+		i_eltype = ARR_ELEMTYPE(state);
+		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
+
 		//deconstruct array 
 		elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &i_data, &nulls, &n);
 	}
