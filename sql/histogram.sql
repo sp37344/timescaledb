@@ -6,6 +6,6 @@ LANGUAGE C IMMUTABLE;
 -- Tell Postgres how to use the new function
 DROP AGGREGATE IF EXISTS histogram (REAL, REAL, REAL, INTEGER);
 CREATE AGGREGATE histogram (REAL, REAL, REAL, INTEGER) (
-       SFUNC = hist_sfunc,
+       SFUNC = _timescaledb_internal.hist_sfunc,
        STYPE = INTEGER[]
 );

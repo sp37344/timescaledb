@@ -48,6 +48,12 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
 
+	if (!AggCheckCallContext(fcinfo, &aggcontext))
+	{
+		/* cannot be called directly because of internal-type argument */
+		elog(ERROR, "hist_sfunc called in non-aggregate context");
+	}
+
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
@@ -60,6 +66,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		}
 	}
 
+	else {
+		//deconstruct array 
+		elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &i_data, &nulls, &n);
+	}
+	
 	//increment state
 	elems[bucket] = elems[bucket] + 1;
 
@@ -69,8 +80,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
 }
-
-
 
 
 // hist_combinerfunc()
