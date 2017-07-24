@@ -45,14 +45,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	MemoryContext aggcontext; 
 
-	//deconstruct
-	Oid    	i_eltype, s_eltype, o_eltype;
-    int16  	i_typlen, o_typlen;
-    bool   	i_typbyval, o_typbyval;
-    char   	i_typalign, o_typalign;
-    int 	n;
-
-
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
 
@@ -76,6 +68,13 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 
 	else {
+		//deconstruct
+		Oid    	i_eltype, s_eltype, o_eltype;
+	    int16  	i_typlen, o_typlen;
+	    bool   	i_typbyval, o_typbyval;
+	    char   	i_typalign, o_typalign;
+	    int 	n;
+    
 		/* get input array element type */
 		i_eltype = ARR_ELEMTYPE(state);
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
