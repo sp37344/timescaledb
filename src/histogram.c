@@ -8,6 +8,7 @@
 #include <catalog/pg_type.h>
 #include <catalog/namespace.h>
 #include <utils/guc.h>
+#include <utils/adt/float.h>
 
 #include "utils.h"
 #include "nodes/nodes.h"
