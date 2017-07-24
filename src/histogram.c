@@ -49,7 +49,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
 
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
-	if (elems == NULL) //could also check if state is NULL 
+	if (NULL == elems) //could also check if state is NULL 
 	{
 		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
 		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets)
