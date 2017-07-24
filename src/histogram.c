@@ -66,10 +66,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		}
 	}
 
-	else {
-		//deconstruct array 
-		elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &i_data, &nulls, &n);
-	}
+	// else {
+	// 	//deconstruct array 
+	// 	elems = deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &i_data, &nulls, &n);
+	// }
 	
 	//increment state
 	elems[bucket] = elems[bucket] + 1;
