@@ -51,8 +51,8 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
-		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
-		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets)
+		// elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
+		elems = (Datum *) palloc(sizeof(Datum) * nbuckets)
 
 		for (int i = 0; i < nbuckets; i++) 
 		{
