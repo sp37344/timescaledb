@@ -52,7 +52,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	if (state == NULL) //could also check if state is NULL 
 	{
 		// elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
-		elems = (Datum *) palloc(sizeof(Datum) * nbuckets)
+		elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
 
 		for (int i = 0; i < nbuckets; i++) 
 		{
