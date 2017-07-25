@@ -83,6 +83,8 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 		//deconstruct array 
 		// deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
+
+		elems = NULL;
 	}
 	
 	//increment state
