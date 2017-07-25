@@ -44,7 +44,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	float 	min = PG_GETARG_FLOAT4(2); 
 	float 	max = PG_GETARG_FLOAT4(3); 
 
-	int 	nbuckets = PG_GETARG_INT32(4); 
+	int 	nbuckets = 2; // PG_GETARG_INT32(4); 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
