@@ -55,27 +55,26 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
 
+	PG_RETURN_NULL();
 
+	// elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
+	// 	// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
 
+	// for (int i = 0; i < nbuckets; i++) 
+	// {
+	// 	elems[i] = 0;
+	// }
 
-	elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
-		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
+	// 	//increment state
+	// elems[bucket] = elems[bucket] + 1;
 
-	for (int i = 0; i < nbuckets; i++) 
-	{
-		elems[i] = 0;
-	}
+	// 	//create return array 
+	// state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
 
-		//increment state
-	elems[bucket] = elems[bucket] + 1;
-
-		//create return array 
-	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
-
-	PG_FREE_IF_COPY(val, 1);
-	PG_FREE_IF_COPY(min, 2);
-	PG_FREE_IF_COPY(max, 3);
-	PG_FREE_IF_COPY(nbuckets, 4);
+	// PG_FREE_IF_COPY(val, 1);
+	// PG_FREE_IF_COPY(min, 2);
+	// PG_FREE_IF_COPY(max, 3);
+	// PG_FREE_IF_COPY(nbuckets, 4);
 
 
 	// //Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
@@ -125,8 +124,8 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	// }
 
 
-	// returns integer array 
-	PG_RETURN_ARRAYTYPE_P(state); 
+	// // returns integer array 
+	// PG_RETURN_ARRAYTYPE_P(state); 
 }
 
 
