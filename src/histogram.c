@@ -65,6 +65,13 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		{
 			elems[i] = 0;
 		}
+
+		//increment state
+		elems[bucket] = elems[bucket] + 1;
+
+		//create return array 
+		state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
+
 	}
 
 
@@ -83,15 +90,16 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 		//deconstruct array 
 		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
+
+		//increment state
+		elems[bucket] = elems[bucket] + 1;
+
+		//create return array 
+		state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
+
+		pfree(elems);
+		pfree(nulls);
 	}
-	
-	//increment state
-	elems[bucket] = elems[bucket] + 1;
-
-	//create return array 
-	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
-
-	pfree(elems);
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
