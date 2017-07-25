@@ -35,6 +35,8 @@ PG_FUNCTION_INFO_V1(hist_sfunc);
 Datum
 hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments 
 {
+	MemoryContext aggcontext; 
+
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; //Datum array used in constructing state array 
 
@@ -42,9 +44,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	float 	min = PG_GETARG_FLOAT4(2); 
 	float 	max = PG_GETARG_FLOAT4(3); 
 
-	int 	nbuckets = PG_GETARG_INT32(4); 
-
-	MemoryContext aggcontext; 
+	int 	nbuckets = 1; 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
@@ -54,6 +54,29 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		/* cannot be called directly because of internal-type argument */
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
+
+
+
+
+	elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
+		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
+
+	for (int i = 0; i < nbuckets; i++) 
+	{
+		elems[i] = 0;
+	}
+
+		//increment state
+	elems[bucket] = elems[bucket] + 1;
+
+		//create return array 
+	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
+
+	// PG_FREE_IF_COPY(val, 1);
+	// PG_FREE_IF_COPY(min, 2);
+	// PG_FREE_IF_COPY(max, 3);
+	// PG_FREE_IF_COPY(nbuckets, 4);
+
 
 	// //Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	// if (state == NULL) //could also check if state is NULL 
@@ -100,21 +123,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	// 	pfree(elems);
 	// 	pfree(nulls);
 	// }
-
-
-	elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
-		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
-
-	for (int i = 0; i < nbuckets; i++) 
-	{
-		elems[i] = 0;
-	}
-
-		//increment state
-	elems[bucket] = elems[bucket] + 1;
-
-		//create return array 
-	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
 
 
 	// returns integer array 
