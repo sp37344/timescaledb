@@ -55,27 +55,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
 
-	// PG_RETURN_ARRAYTYPE_P(state); 
-
-	// elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * nbuckets);
-	// 	// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
-
-	// for (int i = 0; i < nbuckets; i++) 
-	// {
-	// 	elems[i] = 0;
-	// }
-
-	// 	//increment state
-	// elems[bucket] = elems[bucket] + 1;
-
-	// 	//create return array 
-	// state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
-
-	// PG_FREE_IF_COPY(val, 1);
-	// PG_FREE_IF_COPY(min, 2);
-	// PG_FREE_IF_COPY(max, 3);
-	// PG_FREE_IF_COPY(nbuckets, 4);
-
 
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
@@ -89,39 +68,40 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		}
 
 		//increment state
-		elems[bucket] = elems[bucket] + 1;
+//		elems[bucket] = elems[bucket] + 1;
 
 		//create return array 
-		state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
+//		state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
+		state = construct_empty_array(INT8OID);
 
 	}
 
 
-	else { //ERROR: NULL VALUE?
-		//deconstruct
-		Oid    	i_eltype;
-	    int16  	i_typlen;
-	    bool   	i_typbyval;
-	    char   	i_typalign;
-	    int 	n;
-	    bool 	*nulls;
+	// else { //ERROR: NULL VALUE?
+	// 	//deconstruct
+	// 	Oid    	i_eltype;
+	//     int16  	i_typlen;
+	//     bool   	i_typbyval;
+	//     char   	i_typalign;
+	//     int 	n;
+	//     bool 	*nulls;
 
-		/* get input array element type */
-		i_eltype = ARR_ELEMTYPE(state);
-		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
+	// 	/* get input array element type */
+	// 	i_eltype = ARR_ELEMTYPE(state);
+	// 	get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
-		//deconstruct array 
-		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
+	// 	//deconstruct array 
+	// 	deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
 
-		//increment state
-		elems[bucket] = elems[bucket] + 1;
+	// 	//increment state
+	// 	elems[bucket] = elems[bucket] + 1;
 
-		//create return array 
-		state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
+	// 	//create return array 
+	// 	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
 
-		pfree(elems);
-		pfree(nulls);
-	}
+	// 	pfree(elems);
+	// 	pfree(nulls);
+	// }
 
 
 	// returns integer array 
