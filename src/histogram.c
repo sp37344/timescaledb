@@ -82,7 +82,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
 		//deconstruct array 
-		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
+		// deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n);
 	}
 	
 	//increment state
