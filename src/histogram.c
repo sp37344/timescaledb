@@ -47,7 +47,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	int 	nbuckets = 2; 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
-	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
+	int 	bucket = 1; //DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
