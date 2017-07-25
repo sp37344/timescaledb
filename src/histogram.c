@@ -44,7 +44,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	float 	min = PG_GETARG_FLOAT4(2); 
 	float 	max = PG_GETARG_FLOAT4(3); 
 
-	int 	nbuckets = 1; 
+	int 	nbuckets = 2; 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 1) - 1; 
@@ -72,10 +72,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		//create return array 
 	state = construct_array(elems, nbuckets, INT4OID, sizeof(int), false, 'i'); 
 
-	// PG_FREE_IF_COPY(val, 1);
-	// PG_FREE_IF_COPY(min, 2);
-	// PG_FREE_IF_COPY(max, 3);
-	// PG_FREE_IF_COPY(nbuckets, 4);
+	PG_FREE_IF_COPY(val, 1);
+	PG_FREE_IF_COPY(min, 2);
+	PG_FREE_IF_COPY(max, 3);
+	PG_FREE_IF_COPY(nbuckets, 4);
 
 
 	// //Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
