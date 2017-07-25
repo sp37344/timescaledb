@@ -9,6 +9,7 @@
 #include <catalog/namespace.h>
 #include <utils/guc.h>
 #include <utils/builtins.h>
+#include <utils/array.h>
 
 #include "utils.h"
 #include "nodes/nodes.h"
@@ -67,7 +68,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	}
 
 
-	else {
+	else { //ERROR: NULL VALUE?
 		//deconstruct
 		Oid    	i_eltype;
 	    int16  	i_typlen;
