@@ -105,7 +105,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//state = construct_array(elems, nbuckets, INT8OID, 8, true, 'd'); 
 	//state = construct_array(elems, nbuckets, INT4OID, 4, true, 'i'); 
 
-	state = construct_md_array(elems, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+	state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
