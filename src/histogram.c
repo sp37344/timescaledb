@@ -49,7 +49,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	int     dims[1];
  	int     lbs[1];
- 	int 	k = 0;
+ 	// int 	k = 0;
  	int 	s = 0;
 
 	lbs[0] = 1;
@@ -65,7 +65,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	if (state == NULL) //could also check if state is NULL 
 	{
 		if (bucket == 0) {
-			k = 1;
+			// k = 1;
 			lbs[0] = 0;
 		}
 		if (bucket > nbuckets) {
@@ -79,7 +79,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems[i] = (Datum) 0;
 		}
 
-		dims[0] = nbuckets + k;
+		dims[0] = nbuckets + 1 - lbs[0]; // + k;
 	}
 
 	else { //ERROR: NULL VALUE?
