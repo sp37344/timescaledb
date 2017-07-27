@@ -67,6 +67,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	{
 		if (bucket == 0) {
 			i = 0;
+			lbs[0] = 0;
 		}
 		else if (bucket > nbuckets) {
 			nbuckets++;
@@ -95,21 +96,27 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		i_eltype = ARR_ELEMTYPE(state);
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
-		// if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) 
-		// {
-		// 	lbs[0] = 0;
-
-		// 	deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
-
-		// }
-
-		// else 
-		// {
-		// 	deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems + 1, &nulls, &n); //zero based -- i think 
-		// }
-
 		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
 	
+		if (bucket == 0) {
+			lbs[0] = 0;
+
+			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 1) {
+				//COPY ARRAY -0
+				n++;
+			} 
+		}
+
+		else {
+			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+				lbs[0] = 0;
+			}
+
+			if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
+				//COPY ARRAY +1
+				n++;
+			}
+		}
 		//is this zero based? 
 		//deconstruct array with elems + 1 if there is a zero 
 		dims[0] = n;
@@ -119,12 +126,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
 
 	//create return array 
-	// construct_md_array(Datum *elems, bool *nulls, int ndims, int *dims, int *lbs, Oid elmtype, int elmlen, bool elmbyval, char elmalign)
-	// construct_array(Datum *elems, int nelems, Oid elmtype, int elmlen, bool elmbyval, char elmalign)	
-
-	//state = construct_array(elems, nbuckets, INT8OID, 8, true, 'd'); 
-	//state = construct_array(elems, nbuckets, INT4OID, 4, true, 'i'); 
-
 	state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	// returns integer array 
