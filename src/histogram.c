@@ -51,7 +51,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	int     dims[1];
  	int     lbs[1];
- 	int 	i = 1; //default set to 1
+ 	// int 	i = 0; //default set to 1
 
 	lbs[0] = 1;
 
@@ -69,18 +69,18 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			i = 0;
 			lbs[0] = 0;
 		}
-		else if (bucket > nbuckets) {
+		if (bucket > nbuckets) {
 			nbuckets++;
 		}
 
-		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets + 1 - i));
+		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets + 1)); //1 accounts for the zero-th element 
 		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
 
-		for (; i <= nbuckets; i++) {
+		for (int i = 0; i <= nbuckets; i++) {
 			elems[i] = (Datum) 0;
 		}
 
-		dims[0] = nbuckets + 1 - i;
+		dims[0] = nbuckets + 1;
 	}
 
 	else { //ERROR: NULL VALUE?
@@ -152,8 +152,16 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//increment state
 	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
 
+ 	if (bucket == 0) {
+ 		lbs[0] = 0;
+ 		state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 	}
+
+ 	else {
+ 		state = construct_md_array(*(elems + 1), NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 	}
 	//create return array 
-	state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+	// state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
