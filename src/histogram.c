@@ -49,9 +49,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	int     dims[1];
  	int     lbs[1];
+ 	int 	k = 0;
  	int 	s = 0;
 
- 	lbs[0] = (bucket == 0) ? 0 : 1;
+	lbs[0] = 1;
+
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
@@ -62,6 +64,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
+		if (bucket == 0) {
+			k = 1;
+			lbs[0] = 0;
+		}
 		if (bucket > nbuckets) {
 			nbuckets++;
 		}
@@ -73,79 +79,93 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems[i] = (Datum) 0;
 		}
 
-		dims[0] = nbuckets + 1 - lbs[0]; // + k;
+		dims[0] = nbuckets + k;
 	}
 
-	else { 
-		// deconstruct parameters
+	else { //ERROR: NULL VALUE?
+		//deconstruct
 		Oid    	i_eltype;
 	    int16  	i_typlen;
 	    bool   	i_typbyval;
 	    char   	i_typalign;
 	    int 	n;
 	    bool 	*nulls;
-	    // copy of elems if needed 
+
 	    Datum 	*elems_edit;
 
 		/* get input array element type */
 		i_eltype = ARR_ELEMTYPE(state);
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
-		// deconstruct array 
 		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
-
-		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+	
+		if (bucket == 0) {
 			lbs[0] = 0;
-		}
 
-		else if (bucket != 0 && DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) != 0) { //what if statelb is not zero but bucket is zero?
-			s = 1;
-		}
-
-		if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
-			n++;
-			//COPY ARRAY -0
-			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-			elems_edit[0] = (Datum) 0;
-			for (int j = 1; j <= n; j++) {
-				elems_edit[j] = elems[j - 1];
-			}
-			elems = elems_edit;
-		}
-
-		else if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
-			n++;
-			//COPY ARRAY +1
-			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-
-			if (lbs[0] != 0) {
+			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 1) {
+				n++;
+				//COPY ARRAY -0
+				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
 				elems_edit[0] = (Datum) 0;
-				for (int j = 1; j < n; j++) {
+				for (int j = 1; j <= n; j++) {
 					elems_edit[j] = elems[j - 1];
 				}
-			}
-			else {
-				for (int j = 0; j < n; j++) {
-					elems_edit[j] = elems[j];
-				}
-			}
-			elems_edit[bucket] = (Datum) 0;
-			elems = elems_edit;
+				elems = elems_edit;
+			} 
 		}
 
 		else {
-			s = 1;
+			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+				lbs[0] = 0;
+			}
+			else {
+				s = 1;
+			}
+
+			if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
+				n++;
+				//COPY ARRAY +1
+				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+				if (lbs[0] != 0) {
+					elems_edit[0] = (Datum) 0;
+					for (int j = 1; j < n; j++) {
+						elems_edit[j] = elems[j - 1];
+					}
+				}
+				else {
+					for (int j = 0; j < n; j++) {
+						elems_edit[j] = elems[j];
+					}
+				}
+				elems_edit[bucket] = (Datum) 0;
+				elems = elems_edit;
+			}
 		}
 
+//another way 
+		// if (bucket == 0) {
+		// 	lbs[0] = 0;
+		// }
+		// if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1))
+
+		// if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1))
+
+//end
+
+		//deconstruct array with elems + 1 if there is a zero 
 		dims[0] = n;
 	}
 
 	//increment state
 	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
 
-	//construct state
  	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+	//create return array 
+	// state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
 }
+
+
+// hist_combinerfunc()
