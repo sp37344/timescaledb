@@ -152,13 +152,13 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//increment state
 	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
 
- 	if (bucket == 0) {
+ 	if (elems[0] == 0) {
  		lbs[0] = 0;
  		state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
  	}
 
  	else {
- 		state = construct_md_array(*(elems + 1), NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 		state = construct_md_array((elems + 1), NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
  	}
 	//create return array 
 	// state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
