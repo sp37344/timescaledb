@@ -114,6 +114,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		}
 
 		if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
+			s = 0;
 			n++;
 			//COPY ARRAY +1
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
