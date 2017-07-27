@@ -76,32 +76,29 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		dims[0] = nbuckets + 1 - lbs[0]; // + k;
 	}
 
-	else { //ERROR: NULL VALUE?
-		//deconstruct
+	else { 
+		// deconstruct parameters
 		Oid    	i_eltype;
 	    int16  	i_typlen;
 	    bool   	i_typbyval;
 	    char   	i_typalign;
 	    int 	n;
 	    bool 	*nulls;
-
+	    // copy of elems if needed 
 	    Datum 	*elems_edit;
 
 		/* get input array element type */
 		i_eltype = ARR_ELEMTYPE(state);
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
+		// deconstruct array 
 		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
 
 		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
 			lbs[0] = 0;
 		}
 
-		else {
-			s = 1;
-		}
-
-		if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+		else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
 			n++;
 			//COPY ARRAY -0
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
@@ -132,7 +129,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems = elems_edit;
 		}
 
-		//deconstruct array with elems + 1 if there is a zero 
+		else {
+			s = 1;
+		}
+
 		dims[0] = n;
 	}
 
