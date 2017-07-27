@@ -49,7 +49,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	int     dims[1];
  	int     lbs[1];
- 	// int 	s = 0;
+ 	int 	s = 0;
 
  	lbs[0] = (bucket == 0) ? 0 : 1;
 
@@ -98,6 +98,21 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			lbs[0] = 0;
 		}
 
+		else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+			n++;
+			//COPY ARRAY -0
+			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+			elems_edit[0] = (Datum) 0;
+			for (int j = 1; j <= n; j++) {
+				elems_edit[j] = elems[j - 1];
+			}
+			elems = elems_edit;
+		}
+
+		else { //what if statelb != 0 and bucket == 0 (in which case lb[0] is 0)
+			s = 1;
+		}
+
 		if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
 			n++;
 			//COPY ARRAY +1
@@ -118,25 +133,14 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems = elems_edit;
 		}
 
-		else { // if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
-			n++;
-			//COPY ARRAY -0
-			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-			elems_edit[0] = (Datum) 0;
-			for (int j = 1; j <= n; j++) {
-				elems_edit[j] = elems[j - 1];
-			}
-			elems = elems_edit;
-		}
-
 		dims[0] = n;
 	}
 
 	//increment state
-	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
+	elems[bucket-s] = elems[bucket-s] + (Datum) 1; //is this correct if you are extracting from state?
 
 	//construct state
- 	state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
