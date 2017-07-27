@@ -44,15 +44,15 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	float 	min = PG_GETARG_FLOAT4(2); 
 	float 	max = PG_GETARG_FLOAT4(3); 
 
-	int 	nbuckets = PG_GETARG_INT32(4) + 2; 
+	int 	nbuckets = PG_GETARG_INT32(4); 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 2); //minus three? 
 
-	int         dims[1];
- 	int         lbs[1];
+	int     dims[1];
+ 	int     lbs[1];
+ 	int 	i = 0; //default set to 1
 
-	dims[0] = nbuckets;
 	lbs[0] = 1;
 
 
@@ -65,14 +65,15 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
-		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets));
+		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets + 1 - i));
 		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
 
-		for (int i = 0; i <= nbuckets + 1; i++) 
+		for (i; i <= nbuckets + 1; i++) 
 		{
 			elems[i] = (Datum) 0;
 		}
 
+		dims[0] = nbuckets;
 	}
 
 	else { //ERROR: NULL VALUE?
@@ -101,10 +102,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		// 	deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems + 1, &nulls, &n); //zero based -- i think 
 		// }
 
-		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems + 1, &nulls, &n); //zero based -- i think 
+		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
 	
 		//is this zero based? 
 		//deconstruct array with elems + 1 if there is a zero 
+		dims[0] = n;
 	}
 
 	//increment state
