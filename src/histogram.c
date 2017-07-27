@@ -124,8 +124,16 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 				n++;
 				//COPY ARRAY +1
 				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-				for (int j = 0; j < n; j++) {
-					elems_edit[j] = elems[j];
+				if (lbs[0] != 0) {
+					elems_edit[0] = (Datum) 0;
+					for (int j = 1; j < n; j++) {
+						elems_edit[j] = elems[j - 1];
+					}
+				}
+				else {
+					for (int j = 0; j < n; j++) {
+						elems_edit[j] = elems[j];
+					}
 				}
 				elems_edit[bucket] = (Datum) 0;
 				elems = elems_edit;
@@ -154,11 +162,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
  	if (elems[0] == 0) {
  		lbs[0] = 0;
- 		state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 		state = construct_md_array(elems + 1, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
  	}
 
  	else {
- 		state = construct_md_array((elems + 1), NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 		state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
  	}
 	//create return array 
 	// state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
