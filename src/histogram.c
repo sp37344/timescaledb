@@ -48,10 +48,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets); //minus three? 
 
 	int     dims[1];
- 	int     lbs[1] = (bucket == 0) ? {0} : {1};
+ 	int     lbs[1];
  	// int 	k = 0;
  	int 	s = 0;
 
+ 	lbs[0] = (bucket == 0) ? {0} : {1};
  // 	if (bucket == 0) {
 	// 	lbs[0] = 0;
 	// }
