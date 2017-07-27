@@ -98,7 +98,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			lbs[0] = 0;
 		}
 
-		else { //what if statelb is not zero but bucket is zero?
+		else if (bucket != 0 && DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) != 0) { //what if statelb is not zero but bucket is zero?
 			s = 1;
 		}
 
@@ -131,6 +131,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			}
 			elems_edit[bucket] = (Datum) 0;
 			elems = elems_edit;
+		}
+
+		else {
+			s = 1;
 		}
 
 		dims[0] = n;
