@@ -65,10 +65,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
-		if (bucket == 0) {
-			i = 0;
-			lbs[0] = 0;
-		}
+		// if (bucket == 0) {
+		// 	i = 0;
+		// 	lbs[0] = 0;
+		// }
 		if (bucket > nbuckets) {
 			nbuckets++;
 		}
