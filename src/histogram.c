@@ -105,9 +105,13 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 1) {
 				n++;
-
 				//COPY ARRAY -0
 				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+				elems_edit[0] = (Datum) 0;
+				for (int j = 1; j <= n; j++) {
+					elems_edit[j] = elems[j - 1];
+				}
+				elems = elems_edit;
 			} 
 		}
 
@@ -120,8 +124,26 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 				n++;
 				//COPY ARRAY +1
 				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+				for (int j = 0; j < n; j++) {
+					elems_edit[j] = elems[j];
+				}
+				elems_edit[bucket] = (Datum) 0;
+				elems = elems_edit;
 			}
 		}
+
+//another way 
+		// if (bucket == 0) {
+		// 	lbs[0] = 0;
+		// }
+		// if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1))
+
+		// if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1))
+
+//end
+
+
+
 		//is this zero based? 
 		//deconstruct array with elems + 1 if there is a zero 
 		dims[0] = n;
