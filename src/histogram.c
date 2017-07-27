@@ -55,8 +55,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
  	if (bucket == 0) {
 		lbs[0] = 0;
 	}
+	else {
+		lbs[0] = 1;	
+	}
 
-	lbs[0] = 1;
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
