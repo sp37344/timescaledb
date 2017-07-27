@@ -52,8 +52,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
  	// int 	k = 0;
  	int 	s = 0;
 
-	lbs[0] = 1;
+ 	if (bucket == 0) {
+		lbs[0] = 0;
+	}
 
+	lbs[0] = 1;
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
@@ -64,10 +67,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
-		if (bucket == 0) {
-			// k = 1;
-			lbs[0] = 0;
-		}
 		if (bucket > nbuckets) {
 			nbuckets++;
 		}
@@ -98,59 +97,44 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
 		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
-	
-		if (bucket == 0) {
-			lbs[0] = 0;
 
-			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 1) {
-				n++;
-				//COPY ARRAY -0
-				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-				elems_edit[0] = (Datum) 0;
-				for (int j = 1; j <= n; j++) {
-					elems_edit[j] = elems[j - 1];
-				}
-				elems = elems_edit;
-			} 
+		if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+			n++;
+			//COPY ARRAY -0
+			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+			elems_edit[0] = (Datum) 0;
+			for (int j = 1; j <= n; j++) {
+				elems_edit[j] = elems[j - 1];
+			}
+			elems = elems_edit;
+		}
+
+		else if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+			lbs[0] = 0;
 		}
 
 		else {
-			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
-				lbs[0] = 0;
-			}
-			else {
-				s = 1;
-			}
-
-			if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
-				n++;
-				//COPY ARRAY +1
-				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-				if (lbs[0] != 0) {
-					elems_edit[0] = (Datum) 0;
-					for (int j = 1; j < n; j++) {
-						elems_edit[j] = elems[j - 1];
-					}
-				}
-				else {
-					for (int j = 0; j < n; j++) {
-						elems_edit[j] = elems[j];
-					}
-				}
-				elems_edit[bucket] = (Datum) 0;
-				elems = elems_edit;
-			}
+			s = 1;
 		}
 
-//another way 
-		// if (bucket == 0) {
-		// 	lbs[0] = 0;
-		// }
-		// if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1))
-
-		// if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1))
-
-//end
+		if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
+			n++;
+			//COPY ARRAY +1
+			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+			if (lbs[0] != 0) {
+				elems_edit[0] = (Datum) 0;
+				for (int j = 1; j < n; j++) {
+					elems_edit[j] = elems[j - 1];
+				}
+			}
+			else {
+				for (int j = 0; j < n; j++) {
+					elems_edit[j] = elems[j];
+				}
+			}
+			elems_edit[bucket] = (Datum) 0;
+			elems = elems_edit;
+		}
 
 		//deconstruct array with elems + 1 if there is a zero 
 		dims[0] = n;
