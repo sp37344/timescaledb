@@ -98,11 +98,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			lbs[0] = 0;
 		}
 
-		else { //what if statelb is not zero but bucket is zero?
-			s = 1;
-		}
-
-		if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+		else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
 			n++;
 			//COPY ARRAY -0
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
