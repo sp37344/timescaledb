@@ -49,16 +49,9 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 	int     dims[1];
  	int     lbs[1];
- 	// int 	k = 0;
  	int 	s = 0;
 
- 	lbs[0] = (bucket == 0) ? {0} : {1};
- // 	if (bucket == 0) {
-	// 	lbs[0] = 0;
-	// }
-	// else {
-	// 	lbs[0] = 1;	
-	// }
+ 	lbs[0] = (bucket == 0) ? 0 : 1;
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
@@ -100,6 +93,14 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
 
+		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+			lbs[0] = 0;
+		}
+
+		else {
+			s = 1;
+		}
+
 		if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
 			n++;
 			//COPY ARRAY -0
@@ -111,18 +112,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems = elems_edit;
 		}
 
-		else if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
-			lbs[0] = 0;
-		}
-
-		else {
-			s = 1;
-		}
-
-		if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
+		else if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
 			n++;
 			//COPY ARRAY +1
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+
 			if (lbs[0] != 0) {
 				elems_edit[0] = (Datum) 0;
 				for (int j = 1; j < n; j++) {
