@@ -48,17 +48,16 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets); //minus three? 
 
 	int     dims[1];
- 	int     lbs[1];
+ 	int     lbs[1] = (bucket == 0) ? {0} : {1};
  	// int 	k = 0;
  	int 	s = 0;
 
- 	if (bucket == 0) {
-		lbs[0] = 0;
-	}
-	else {
-		lbs[0] = 1;	
-	}
-
+ // 	if (bucket == 0) {
+	// 	lbs[0] = 0;
+	// }
+	// else {
+	// 	lbs[0] = 1;	
+	// }
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
@@ -145,13 +144,9 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//increment state
 	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
 
+	//construct state
  	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
-	//create return array 
-	// state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	// returns integer array 
 	PG_RETURN_ARRAYTYPE_P(state); 
 }
-
-
-// hist_combinerfunc()
