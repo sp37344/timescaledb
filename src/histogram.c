@@ -47,11 +47,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	int 	nbuckets = PG_GETARG_INT32(4); 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
-	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets - 2); //minus three? 
+	int 	bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets); //minus three? 
 
 	int     dims[1];
  	int     lbs[1];
- 	int 	i = 0; //default set to 1
+ 	int 	i = 1; //default set to 1
 
 	lbs[0] = 1;
 
@@ -65,15 +65,21 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
+		if (bucket == 0) {
+			i = 0;
+		}
+		else if (bucket > nbuckets) {
+			nbuckets++;
+		}
+
 		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets + 1 - i));
 		// elems = (Datum *) palloc(sizeof(Datum) * nbuckets);
 
-		for (i; i <= nbuckets + 1; i++) 
-		{
+		for (; i <= nbuckets; i++) {
 			elems[i] = (Datum) 0;
 		}
 
-		dims[0] = nbuckets;
+		dims[0] = nbuckets + 1 - i;
 	}
 
 	else { //ERROR: NULL VALUE?
