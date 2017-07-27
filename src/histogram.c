@@ -92,6 +92,8 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	    int 	n;
 	    bool 	*nulls;
 
+	    Datum 	*elems_edit;
+
 		/* get input array element type */
 		i_eltype = ARR_ELEMTYPE(state);
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
@@ -102,8 +104,10 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			lbs[0] = 0;
 
 			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 1) {
-				//COPY ARRAY -0
 				n++;
+
+				//COPY ARRAY -0
+				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
 			} 
 		}
 
@@ -113,8 +117,9 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			}
 
 			if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
-				//COPY ARRAY +1
 				n++;
+				//COPY ARRAY +1
+				elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
 			}
 		}
 		//is this zero based? 
