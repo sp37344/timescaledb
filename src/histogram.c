@@ -109,7 +109,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems = elems_edit;
 		}
 
-		else if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
+		else { //what if statelb != 0 and bucket == 0 (in which case lb[0] is 0)
+			s = 1;
+		}
+		
+		if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
 			n++;
 			//COPY ARRAY +1
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
@@ -127,10 +131,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			}
 			elems_edit[bucket] = (Datum) 0;
 			elems = elems_edit;
-		}
-
-		else {
-			s = 1;
 		}
 
 		dims[0] = n;
