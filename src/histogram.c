@@ -36,14 +36,12 @@ Datum
 hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments 
 {
 	MemoryContext aggcontext; 
-
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; //Datum array used in constructing state array 
 
 	float 	val = PG_GETARG_FLOAT4(1); 
 	float 	min = PG_GETARG_FLOAT4(2); 
 	float 	max = PG_GETARG_FLOAT4(3); 
-
 	int 	nbuckets = PG_GETARG_INT32(4); 
 
 	//width_bucket uses nbuckets + 1 (!) and starts at 1
@@ -52,6 +50,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	int     dims[1];
  	int     lbs[1];
  	int 	k = 0;
+ 	int 	s = 0;
 
 	lbs[0] = 1;
 
@@ -80,7 +79,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			elems[i] = (Datum) 0;
 		}
 
-		dims[0] = nbuckets;
+		dims[0] = nbuckets + k;
 	}
 
 	else { //ERROR: NULL VALUE?
@@ -119,6 +118,9 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 			if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
 				lbs[0] = 0;
 			}
+			else {
+				s = 1;
+			}
 
 			if (bucket > DirectFunctionCall2(array_upper, PointerGetDatum(state), 1)) {
 				n++;
@@ -150,9 +152,6 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 //end
 
-
-
-		//is this zero based? 
 		//deconstruct array with elems + 1 if there is a zero 
 		dims[0] = n;
 	}
@@ -160,7 +159,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 	//increment state
 	elems[bucket] = elems[bucket] + (Datum) 1; //is this correct if you are extracting from state?
 
- 	state = construct_md_array(elems + lb[0], NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 	//create return array 
 	// state = construct_md_array(elems, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
