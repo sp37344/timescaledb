@@ -92,7 +92,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
 		// deconstruct array 
-		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); //zero based -- i think 
+		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); 
 
 		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
 			lbs[0] = 0;
