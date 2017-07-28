@@ -28,7 +28,7 @@ INSERT INTO "hitest2" VALUES('Jane', 10, TRUE);
 SELECT histogram(key, 0, 9, 2) FROM hitest1;
 -- standard multi-bucket 
 SELECT histogram(key, 0, 9, 5) FROM hitest1;
--- standard extra bucket 
+-- standard 3 bucket 
 SELECT val, histogram(key, 0, 7, 3) FROM hitest1 GROUP BY val;
 -- standard element beneath lb
 SELECT histogram(key, 1, 7, 3) FROM hitest1;
@@ -37,7 +37,7 @@ SELECT histogram(key, 0, 3, 3) FROM hitest1;
 -- standard element beneath and above lb and ub, respectively 
 SELECT histogram(key, 1, 3, 2) FROM hitest1;
 
--- error testing: count > 1
+-- standard 1 bucket
 SELECT histogram(key, 1, 3, 1) FROM hitest1;
 -- error testing: max > min
 SELECT histogram(key, 5, 3, 2) FROM hitest1;

@@ -59,6 +59,11 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
 
+
+	if (min > max) {
+		elog(ERROR, "lower bound cannot exceed upper bound")
+	}
+
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
 	if (state == NULL) //could also check if state is NULL 
 	{
