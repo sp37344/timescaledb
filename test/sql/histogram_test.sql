@@ -25,9 +25,9 @@ INSERT INTO "hitest2" VALUES('Jaq', 3, FALSE);
 INSERT INTO "hitest2" VALUES('Jane', 10, TRUE);
 
 -- standard 2 bucket
-SELECT histogram(key, 0, 10, 2) FROM hitest1;
+SELECT histogram(key, 0, 9, 2) FROM hitest1;
 -- standard multi-bucket 
-SELECT histogram(key, 0, 10, 5) FROM hitest1;
+SELECT histogram(key, 0, 9, 5) FROM hitest1;
 -- standard extra bucket 
 SELECT val, histogram(key, 0, 7, 3) FROM hitest1 GROUP BY val;
 -- standard element beneath lb
