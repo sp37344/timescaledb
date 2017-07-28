@@ -61,7 +61,7 @@ hist_sfunc(PG_FUNCTION_ARGS) //postgres function arguments
 
 
 	if (min > max) {
-		elog(ERROR, "lower bound cannot exceed upper bound")
+		elog(ERROR, "lower bound cannot exceed upper bound");
 	}
 
 	//Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop)
