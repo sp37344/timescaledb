@@ -207,7 +207,7 @@ hist_combinefunc(PG_FUNCTION_ARGS)
 		deconstruct_array(state2, i_eltype, i_typlen, i_typbyval, i_typalign, &s2, NULL, &n); 
 
 		/* Initialize result array (which is zero-indexed in C with zeroes */
-		for (int i = 0; i < dims[0]; i++) {
+		for (int i = 0; i < dims[0] + lbs[0]; i++) {
 			result[i] = (Datum) 0;
 		}
 
