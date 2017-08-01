@@ -1,4 +1,5 @@
 #include <postgres.h>
+//#include <fmgr.h>
 #include <catalog/pg_type.h>
 #include <utils/builtins.h>
 #include <utils/array.h>
@@ -13,6 +14,7 @@
  */
 
 PG_FUNCTION_INFO_V1(hist_sfunc);
+PG_FUNCTION_INFO_V1(hist_combinefunc);
 
 /* Generate a histogram */
 Datum
@@ -141,4 +143,85 @@ hist_sfunc(PG_FUNCTION_ARGS)
 
 	/* Return the integer array */
 	PG_RETURN_ARRAYTYPE_P(state); 
+}
+
+/* first_combinerfunc(ArrayType, ArrayType) => ArrayType */
+Datum
+hist_combinefunc(PG_FUNCTION_ARGS)
+{
+	MemoryContext 	aggcontext;
+	ArrayType 	*state1 = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType 	*state2 = PG_ARGISNULL(1) ? NULL : PG_GETARG_ARRAYTYPE_P(1);
+
+	if (!AggCheckCallContext(fcinfo, &aggcontext))
+	{
+		/* Cannot be called directly because of internal-type argument */
+		elog(ERROR, "hist_combinefunc called in non-aggregate context");
+	}
+
+	if (state2 == NULL)
+		PG_RETURN_ARRAYTYPE_P(state1);
+
+	else if (state1 == NULL)
+		PG_RETURN_ARRAYTYPE_P(state2);
+
+	else 
+	{
+		Datum 	*s1, *s2, *result; 
+		int     dims[1]; // 1-D array containing number of buckets used to construct histogram
+ 		int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
+		int 	ubs; // upper bound used to construct histogram
+		int 	lb1 = DirectFunctionCall2(array_lower, PointerGetDatum(state1), 1);
+		int 	lb2 = DirectFunctionCall2(array_lower, PointerGetDatum(state2), 1);
+		int 	ub1 = DirectFunctionCall2(array_upper, PointerGetDatum(state1), 1);
+		int 	ub2 = DirectFunctionCall2(array_upper, PointerGetDatum(state2), 1); // lower and upper bounds for both states
+
+		/* state variables */
+		Oid    	i_eltype;
+	    int16  	i_typlen;
+	    bool   	i_typbyval;
+	    char   	i_typalign;
+	    int 	n;
+
+		/* Get bound extremities */ 
+		lbs[0] = (lb1 <= lb2) ? lb1 : lb2;
+		ubs = (ub1 >= ub2) ? ub1 : ub2;
+
+		dims[0] = ubs - lbs[0] + 1;
+		result = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (dims[0]));
+
+		/* Get state1 array element type */
+		i_eltype = ARR_ELEMTYPE(state1);
+		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
+
+		/* Deconstruct state1 */
+		deconstruct_array(state1, i_eltype, i_typlen, i_typbyval, i_typalign, &s1, NULL, &n);
+
+		/* CAN YOU REUSE THESE VARIABLES? */
+
+		/* Get state1 array element type */
+		i_eltype = ARR_ELEMTYPE(state2);
+		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
+
+		/* Deconstruct state2 */
+		deconstruct_array(state2, i_eltype, i_typlen, i_typbyval, i_typalign, &s2, NULL, &n); 
+
+		/* Initialize result array (which is zero-indexed in C with zeroes */
+		for (int i = 0; i < dims[0]; i++) {
+			result[i] = (Datum) 0;
+		}
+
+		/* Add in state1 */
+		for (int i = lb1; i <= ub1; i++) {
+			result[i] += (Datum) s1[i - lb1];
+		}
+
+		/* Add in state2 */
+		for (int i = lb2; i <= ub2; i++) {
+			result[i] += (Datum) s2[i - lb2];
+		}
+
+		PG_RETURN_ARRAYTYPE_P((construct_md_array(result + lbs[0], NULL, 1, dims, lbs, INT4OID, 4, true, 'i')));
+	}
+
 }
