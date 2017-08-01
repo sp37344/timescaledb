@@ -3,7 +3,7 @@ RETURNS INTEGER[]
 AS '$libdir/timescaledb', 'hist_sfunc'
 LANGUAGE C IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_combinefunc(state1 INTEGER, state2 INTEGER)
+CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_combinefunc(state1 INTEGER[], state2 INTEGER[])
 RETURNS INTEGER[]
 AS '$libdir/timescaledb', 'hist_combinefunc'
 LANGUAGE C IMMUTABLE;
