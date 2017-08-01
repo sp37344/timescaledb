@@ -145,6 +145,7 @@ hist_sfunc(PG_FUNCTION_ARGS)
 	PG_RETURN_ARRAYTYPE_P(state); 
 }
 
+
 /* hist_combinefunc(ArrayType, ArrayType) => ArrayType */
 Datum
 hist_combinefunc(PG_FUNCTION_ARGS)
@@ -167,7 +168,7 @@ hist_combinefunc(PG_FUNCTION_ARGS)
 
 	else 
 	{
-		Datum 	*s1, *s2, *result; // Datum array representations of state1, state2, result
+		Datum 	*s1, *s2, *result; // Datum array representations of state1, state2, and result
 		int     dims[1]; // 1-D array containing number of buckets used to construct result
  		int     lbs[1]; // 1-D array containing the lower bound used to construct result
 		int 	ubs; // upper bound used to construct histogram
