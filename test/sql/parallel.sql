@@ -21,7 +21,7 @@ SELECT time_bucket('1 second', ts) sec, last(i, j) FROM "test" GROUP BY sec ORDE
 EXPLAIN (costs off) SELECT histogram(i, 0, 1000000, 50) FROM "test";
 SELECT histogram(i, 0, 1000000, 50) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, 1,1000000,10) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, 1,1000001,10) FROM "test";
 SELECT histogram(i, 0, 1000000, 10) FROM "test";
 
 EXPLAIN (costs off) SELECT histogram(i, 1,100000,10) FROM "test";
