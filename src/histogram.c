@@ -213,7 +213,7 @@ hist_combinefunc(PG_FUNCTION_ARGS)
 
 		/* Add in state1 */
 		for (int i = lb1; i <= ub1; i++) {
-			result[i] += (Datum) s1[i];
+			result[i] += (Datum) s1[i - lb1];
 		}
 
 		/* Add in state2 */
