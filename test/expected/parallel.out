@@ -118,3 +118,19 @@ SELECT histogram(i, 0, 100000, 5) FROM "test";
  {19999,20000,20000,20000,20000,900001}
 (1 row)
 
+EXPLAIN (costs off) SELECT histogram(i, 10,100000,5) FROM "test";
+                 QUERY PLAN                  
+---------------------------------------------
+ Finalize Aggregate
+   ->  Gather
+         Workers Planned: 2
+         ->  Partial Aggregate
+               ->  Parallel Seq Scan on test
+(5 rows)
+
+SELECT histogram(i, 10, 100000, 5) FROM "test";
+                   histogram                    
+------------------------------------------------
+ [0:6]={9,19998,19998,19998,19998,19998,900001}
+(1 row)
+
