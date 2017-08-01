@@ -27,3 +27,6 @@ SELECT histogram(i, 1, 1000001, 10) FROM "test";
 
 EXPLAIN (costs off) SELECT histogram(i, 0,100000,5) FROM "test";
 SELECT histogram(i, 0, 100000, 5) FROM "test";
+
+EXPLAIN (costs off) SELECT histogram(i, 10,100000,5) FROM "test";
+SELECT histogram(i, 10, 100000, 5) FROM "test";
