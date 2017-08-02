@@ -7,11 +7,11 @@
 
 /* aggregate histogram:
  *	 hist(state, val, min, max, nbuckets) returns the histogram array with nbuckets
- *	 hist(state, val, threshold[]) returns the histogram array 
+ *	 hist(state, val, thresholds[]) returns the histogram array 
  *
  * Usage:
  *	 SELECT hist(field, min, max, nbuckets) FROM table GROUP BY parameter.
- *	 SELECT hist(field, threshold) FROM table GROUP BY parameter.
+ *	 SELECT hist(field, thresholds) FROM table GROUP BY parameter.
  */
 
 PG_FUNCTION_INFO_V1(hist_sfunc);
@@ -154,15 +154,16 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; 
 
-	// Datum 		val = PG_GETARG_DATUM(1);
-	float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
-	ArrayType 	*threshold = PG_GETARG_ARRAYTYPE_P(2);
+	Datum 		val = PG_GETARG_DATUM(1);
+	// float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
+	// ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
+	Datum 	thresholds = PG_GETARG_DATUM(2);
 
 	// int 	bucket = 1;
-	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(threshold)); 
-	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholds); 
-	int 	bucket = DirectFunctionCall2(width_bucket_array, Float4GetDatum(val), PointerGetDatum(threshold));
-	int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(threshold), 1);
+	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
+	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholdss); 
+	int 	bucket = DirectFunctionCall2(width_bucket_array, Float4GetDatum(val), thresholds);
+	int 	nbuckets =  DirectFunctionCall2(array_upper, thresholds, 1);
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
  	int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
@@ -171,10 +172,10 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
  	// // Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) 
  	lbs[0] = (bucket == 0) ? 0 : 1;
 
- 	if (threshold = NULL)
- 	{
- 		elog(ERROR, "threshold is null");
- 	}
+ 	// if (thresholds == NULL)
+ 	// {
+ 	// 	elog(ERROR, "thresholds is null");
+ 	// }
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
