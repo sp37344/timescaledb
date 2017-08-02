@@ -3,9 +3,9 @@ RETURNS INTEGER[]
 AS '$libdir/timescaledb', 'hist_sfunc'
 LANGUAGE C IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_sfunc (state INTEGER[], val REAL, MIN REAL, MAX REAL, nbuckets INTEGER) 
+CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_sfunc_discrete (state INTEGER[], val REAL, thresholds REAL[]) 
 RETURNS INTEGER[] 
-AS '$libdir/timescaledb', 'hist_sfunc'
+AS '$libdir/timescaledb', 'hist_sfunc_discrete'
 LANGUAGE C IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_combinefunc(state1 INTEGER[], state2 INTEGER[])
