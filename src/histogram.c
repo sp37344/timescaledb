@@ -159,7 +159,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
 
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
-	int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholds); 
+	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholds); 
 	int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
 
 	// int     dims[1]; // 1-D array containing number of buckets used to construct histogram
