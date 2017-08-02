@@ -158,8 +158,8 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
 	ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
 
-	int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
-	int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
+	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
+	// int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
  	int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
@@ -234,11 +234,11 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	// 	dims[0] = n;
 	// }
 
-	/* Increment the proper bucket */
-	elems[bucket-s] = elems[bucket-s] + (Datum) 1; 
+	// // Increment the proper bucket 
+	// elems[bucket-s] = elems[bucket-s] + (Datum) 1; 
 
-	/* Construct the state array */
- 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+	// // Construct the state array 
+ // 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	/* Return the integer array */
 	PG_RETURN_ARRAYTYPE_P(state); 
