@@ -98,7 +98,7 @@ hist_sfunc(PG_FUNCTION_ARGS)
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
 			elems_edit[0] = (Datum) 0;
 
-			for (int j = 1; j <= n; j++) {
+			for (int j = 1; j < n; j++) {
 				elems_edit[j] = elems[j - 1];
 			}
 			elems = elems_edit;
@@ -176,7 +176,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
 
-	if (nbuckets > 10)
+	if (nbuckets < 2)
 	{
 		elog(ERROR, "nbuckets larger than 10");
 	}
@@ -196,59 +196,59 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 		dims[0] = nbuckets + 1 - lbs[0];
 	}
 
-	// else { 
-	// 	Oid    	i_eltype;
-	//     int16  	i_typlen;
-	//     bool   	i_typbyval;
-	//     char   	i_typalign;
-	//     int 	n;
-	//     bool 	*nulls;
-	// 	// Copy of elems if needed 
-	//     Datum 	*elems_edit;
+	else { 
+		Oid    	i_eltype;
+	    int16  	i_typlen;
+	    bool   	i_typbyval;
+	    char   	i_typalign;
+	    int 	n;
+	    bool 	*nulls;
+		// Copy of elems if needed 
+	    Datum 	*elems_edit;
 
-	// 	// Get input array element type 
-	// 	i_eltype = ARR_ELEMTYPE(state);
-	// 	get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
+		// Get input array element type 
+		i_eltype = ARR_ELEMTYPE(state);
+		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
-	// 	// Deconstruct array 
-	// 	deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); 
+		// Deconstruct array 
+		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); 
 
-	// 	// Specify zero-based array if the state array already contains a zero index 
-	// 	if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
-	// 		lbs[0] = 0;
-	// 	}
+		// Specify zero-based array if the state array already contains a zero index 
+		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+			lbs[0] = 0;
+		}
 
-	// 	else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
-	// 		n++;
+		else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+			n++;
 
-	// 		// Copy array with an added zero index 
-	// 		elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-	// 		elems_edit[0] = (Datum) 0;
+			// Copy array with an added zero index 
+			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+			elems_edit[0] = (Datum) 0;
 
-	// 		for (int j = 1; j <= n; j++) {
-	// 			elems_edit[j] = elems[j - 1];
-	// 		}
-	// 		elems = elems_edit;
-	// 	}
+			for (int j = 1; j < n; j++) {
+				elems_edit[j] = elems[j - 1];
+			}
+			elems = elems_edit;
+		}
 
-	// 	// Otherwise specify one-based array in PostgreSQL 
-	// 	else { 
-	// 		s = 1;
-	// 	}
+		// Otherwise specify one-based array in PostgreSQL 
+		// else { 
+		// 	s = 1;
+		// }
 
-	// 	// Set number of buckets 
-	// 	dims[0] = n;
-	// }
+		// Set number of buckets 
+		dims[0] = n;
+	}
 
 	// Increment the proper bucket 
-	// elems[bucket-s] = elems[bucket-s] + (Datum) 1; 
+	elems[bucket-s] = elems[bucket-s] + (Datum) 1; 
 
-	// // Construct the state array 
- // 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+	// Construct the state array 
+ 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
-	// /* Return the integer array */
-	// PG_RETURN_ARRAYTYPE_P(state); 
-	PG_RETURN_NULL();
+	/* Return the integer array */
+	PG_RETURN_ARRAYTYPE_P(state); 
+	// PG_RETURN_NULL();
 }
 
 /* hist_combinefunc(ArrayType, ArrayType) => ArrayType */
