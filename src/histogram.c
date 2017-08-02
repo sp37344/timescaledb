@@ -159,8 +159,9 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*threshold = PG_GETARG_ARRAYTYPE_P(2);
 
 	// int 	bucket = 1;
-	int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(threshold)); 
+	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(threshold)); 
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholds); 
+	int 	bucket = DirectFunctionCall2(width_bucket_array, Float4GetDatum(val), PointerGetDatum(threshold));
 	int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(threshold), 1);
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
@@ -169,6 +170,11 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 
  	// // Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) 
  	lbs[0] = (bucket == 0) ? 0 : 1;
+
+ 	if (threshold = NULL)
+ 	{
+ 		elog(ERROR, "threshold is null");
+ 	}
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{

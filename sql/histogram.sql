@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_sfunc_discrete (state INTEGER[], val REAL, thresholds REAL[]) 
+CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_sfunc_discrete (state INTEGER[], val REAL, threshold REAL[]) 
 RETURNS INTEGER[] 
 AS '$libdir/timescaledb', 'hist_sfunc_discrete'
 LANGUAGE C IMMUTABLE;
