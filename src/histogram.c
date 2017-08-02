@@ -154,8 +154,8 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; 
 
-	Datum 		val = PG_GETARG_DATUM(1);
-	// float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
+	// Datum 		val = PG_GETARG_DATUM(1);
+	float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
 	ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
 
 	int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
@@ -196,7 +196,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	    bool   	i_typbyval;
 	    char   	i_typalign;
 	    int 	n;
-	    // bool 	*nulls;
+	    bool 	*nulls;
 	    /* Copy of elems if needed */
 	    Datum 	*elems_edit;
 
@@ -205,7 +205,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 		get_typlenbyvalalign(i_eltype, &i_typlen, &i_typbyval, &i_typalign);
 
 		/* Deconstruct array */
-		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, NULL, &n); 
+		deconstruct_array(state, i_eltype, i_typlen, i_typbyval, i_typalign, &elems, &nulls, &n); 
 
 		/* Specify zero-based array if the state array already contains a zero index */
 		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
