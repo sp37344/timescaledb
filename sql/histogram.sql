@@ -14,18 +14,18 @@ AS '$libdir/timescaledb', 'hist_combinefunc'
 LANGUAGE C IMMUTABLE;
 
 -- Tell Postgres how to use the new function
-DROP AGGREGATE IF EXISTS histogram (REAL, REAL, REAL, INTEGER);
-CREATE AGGREGATE histogram (REAL, REAL, REAL, INTEGER) (
-       SFUNC = _timescaledb_internal.hist_sfunc,
+DROP AGGREGATE IF EXISTS histogram (REAL, REAL[]);
+CREATE AGGREGATE histogram (REAL, REAL[]) (
+       SFUNC = _timescaledb_internal.hist_sfunc_discrete,
        STYPE = INTEGER[],
        COMBINEFUNC = _timescaledb_internal.hist_combinefunc,
        PARALLEL = SAFE
 );
 
 -- Tell Postgres how to use the new function
-DROP AGGREGATE IF EXISTS histogram (REAL, REAL[]);
-CREATE AGGREGATE histogram (REAL, REAL[]) (
-       SFUNC = _timescaledb_internal.hist_sfunc_discrete,
+DROP AGGREGATE IF EXISTS histogram (REAL, REAL, REAL, INTEGER);
+CREATE AGGREGATE histogram (REAL, REAL, REAL, INTEGER) (
+       SFUNC = _timescaledb_internal.hist_sfunc,
        STYPE = INTEGER[],
        COMBINEFUNC = _timescaledb_internal.hist_combinefunc,
        PARALLEL = SAFE
