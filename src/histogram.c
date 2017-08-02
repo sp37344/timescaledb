@@ -215,10 +215,12 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 
 		// Specify zero-based array if the state array already contains a zero index 
 		if (DirectFunctionCall2(array_lower, PointerGetDatum(state), 1) == 0) {
+			elog(ERROR, "ZERO STATE");
 			lbs[0] = 0;
 		}
 
 		else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+			elog(ERROR, "ZERO BUCKET");
 			n++;
 
 			// Copy array with an added zero index 
