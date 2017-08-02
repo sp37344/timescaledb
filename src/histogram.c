@@ -158,8 +158,8 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
 	ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
 
-	int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
-	int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
+	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
+	// int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
  	int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
@@ -174,21 +174,21 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
 
-	/* check if array is sorted  before directfunctionalcall4 */
+	// // check if array is sorted  before directfunctionalcall4 
 
-	/* Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop) */
-	if (state == NULL)  
-	{
-		/* Construct a zero-based array representation in C (+1 accounts for the zero-th element) */
-		elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets + 1)); 
+	// // Init the array with the correct number of 0's so the caller doesn't see NULLs (for loop) 
+	// if (state == NULL)  
+	// {
+	// 	// Construct a zero-based array representation in C (+1 accounts for the zero-th element) 
+	// 	elems = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * (nbuckets + 1)); 
 
-		for (int i = 0; i <= nbuckets; i++) {
-			elems[i] = (Datum) 0;
-		}
+	// 	for (int i = 0; i <= nbuckets; i++) {
+	// 		elems[i] = (Datum) 0;
+	// 	}
 
-		/* Specify the number of elements by accounting for buckets outside of the input range */
-		dims[0] = nbuckets + 1 - lbs[0];
-	}
+	// 	// Specify the number of elements by accounting for buckets outside of the input range 
+	// 	dims[0] = nbuckets + 1 - lbs[0];
+	// }
 
 	// else { 
 	// 	Oid    	i_eltype;
