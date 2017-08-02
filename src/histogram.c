@@ -26,7 +26,7 @@ hist_sfunc(PG_FUNCTION_ARGS)
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; 
 
-	Datum 	val = PG_GETARG_DATUM(1); 
+	float 	val = PG_GETARG_FLOAT4(1); 
 	float 	min = PG_GETARG_FLOAT4(2); 
 	float 	max = PG_GETARG_FLOAT4(3); 
 	int 	nbuckets = PG_GETARG_INT32(4); 
