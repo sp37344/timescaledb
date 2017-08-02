@@ -165,7 +165,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
  	int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
- 	int 	s = 0; // Extra indexing variable for conversion between C and PostgreSQL arrays
+ 	// int 	s = 0; // Extra indexing variable for conversion between C and PostgreSQL arrays
 
  	// // Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) 
  	lbs[0] = (bucket == 0) ? 0 : 1;
@@ -244,7 +244,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	elems[bucket] = elems[bucket] + (Datum) 1; 
 
 	// Construct the state array 
- 	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
+ 	state = construct_md_array(elems + lbs[0], NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
 
 	/* Return the integer array */
 	PG_RETURN_ARRAYTYPE_P(state); 
