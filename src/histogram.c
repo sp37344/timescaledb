@@ -234,12 +234,14 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 		}
 
 		else {
+			// elog(ERROR, "NORMAL");
 			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
 			elems_edit[0] = (Datum) 0;
 
 			for (int j = 1; j <= n; j++) {
 				elems_edit[j] = elems[j - 1];
 			}
+			elems = elems_edit;
 		}
 
 		// Otherwise specify one-based array in PostgreSQL 
