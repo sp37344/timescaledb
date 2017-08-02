@@ -154,7 +154,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; 
 
-	Datum 		val = PG_GETARG_DATUM(1);
+	Datum 	val = PG_GETARG_DATUM(1);
 	// float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
 	// ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
 	Datum 	thresholds = PG_GETARG_DATUM(2);
@@ -162,7 +162,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	// int 	bucket = 1;
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholdss); 
-	int 	bucket = DirectFunctionCall2(width_bucket_array, Float4GetDatum(val), thresholds);
+	int 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholds);
 	int 	nbuckets =  DirectFunctionCall2(array_upper, thresholds, 1);
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
