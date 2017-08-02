@@ -155,18 +155,18 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	Datum 		*elems; 
 
 	// Datum 		val = PG_GETARG_DATUM(1);
-	float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
+	float 		val = PG_GETARG_FLOAT8(1); // DATUM? see postgres docs
 	ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
 
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
-	// int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
+	int 	nbuckets =  DirectFunctionCall2(array_upper, PointerGetDatum(thresholds), 1);
 
 	int     dims[1]; // 1-D array containing number of buckets used to construct histogram
  	int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
  	int 	s = 0; // Extra indexing variable for conversion between C and PostgreSQL arrays
 
- 	/* Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) */
- 	lbs[0] = (bucket == 0) ? 0 : 1;
+ 	// // Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) 
+ 	// lbs[0] = (bucket == 0) ? 0 : 1;
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
