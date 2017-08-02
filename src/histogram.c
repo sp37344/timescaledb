@@ -241,7 +241,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	}
 
 	// Increment the proper bucket 
-	elems[bucket-s] = elems[bucket-s] + (Datum) 1; 
+	elems[bucket] = elems[bucket] + (Datum) 1; 
 
 	// Construct the state array 
  	state = construct_md_array(elems + lbs[0] - s, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'); 
