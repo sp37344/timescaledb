@@ -213,18 +213,18 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 			lbs[0] = 0;
 		}
 
-		else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
-			n++;
+		// else if (bucket < DirectFunctionCall2(array_lower, PointerGetDatum(state), 1)) {
+		// 	n++;
 
-			// Copy array with an added zero index 
-			elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
-			elems_edit[0] = (Datum) 0;
+		// 	// Copy array with an added zero index 
+		// 	elems_edit = (Datum *) MemoryContextAlloc(aggcontext, sizeof(Datum) * n);
+		// 	elems_edit[0] = (Datum) 0;
 
-			for (int j = 1; j <= n; j++) {
-				elems_edit[j] = elems[j - 1];
-			}
-			elems = elems_edit;
-		}
+		// 	for (int j = 1; j <= n; j++) {
+		// 		elems_edit[j] = elems[j - 1];
+		// 	}
+		// 	elems = elems_edit;
+		// }
 
 		// Otherwise specify one-based array in PostgreSQL 
 		else { 
