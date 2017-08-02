@@ -15,6 +15,7 @@
  */
 
 PG_FUNCTION_INFO_V1(hist_sfunc);
+PG_FUNCTION_INFO_V1(hist_sfunc_discrete);
 PG_FUNCTION_INFO_V1(hist_combinefunc);
 
 /* Generate a histogram */
