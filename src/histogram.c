@@ -170,7 +170,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
  	// int 	s = 0; // Extra indexing variable for conversion between C and PostgreSQL arrays
 
  	// print values
- 	printf("value: %d and array: %d", val, thresholds);
+ 	printf("value: %d and array: %d", DatumGetInt32(val), DatumGetInt32(thresholds));
 
  	bucket = 1;
  	// if (PG_ARGISNULL(1) || PG_ARGISNULL(2))
