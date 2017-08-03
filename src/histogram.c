@@ -170,12 +170,13 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
  	// int 	s = 0; // Extra indexing variable for conversion between C and PostgreSQL arrays
 
  	// print values
- 	//fprintf(fp, "%d ", temp->datum);
+ 	printf("value: %d and array: %d", val, thresholds);
 
- 	if (PG_ARGISNULL(1) || PG_ARGISNULL(2))
- 		bucket = 1;
- 	else
- 		bucket = DirectFunctionCall2(width_bucket_array, val, thresholds);
+ 	bucket = 1;
+ 	// if (PG_ARGISNULL(1) || PG_ARGISNULL(2))
+ 	// 	bucket = 1;
+ 	// else
+ 	// 	bucket = DirectFunctionCall2(width_bucket_array, val, thresholds);
 
  	// // Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) 
  	lbs[0] = (bucket == 0) ? 0 : 1;
