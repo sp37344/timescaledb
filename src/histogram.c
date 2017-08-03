@@ -154,10 +154,10 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; 
 
-	Datum 	val = PG_GETARG_DATUM(1);
+	Datum 	val = PG_ARGISNULL(1) ? NULL : PG_GETARG_DATUM(1);
 	// float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
 	// ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
-	Datum 	thresholds = PG_GETARG_DATUM(2);
+	Datum 	thresholds = PG_ARGISNULL(2) ? NULL : PG_GETARG_DATUM(2);
 
 	// int 	bucket = 1;
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
@@ -169,15 +169,16 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
  	int     lbs[1]; // 1-D array containing the lower bound used to construct histogram
  	// int 	s = 0; // Extra indexing variable for conversion between C and PostgreSQL arrays
 
+ 	// print values
+ 	//fprintf(fp, "%d ", temp->datum);
+
+ 	if (PG_ARGISNULL(1) || PG_ARGISNULL(2))
+ 		bucket = 1;
+ 	else
+ 		bucket = DirectFunctionCall2(width_bucket_array, val, thresholds);
+
  	// // Determine the lower bound (i.e. zero- or one-basing in PostgreSQL array) 
  	lbs[0] = (bucket == 0) ? 0 : 1;
-
- 	if (val != NULL && thresholds != NULL)
- 	{
- 		bucket = DirectFunctionCall2(width_bucket_array, val, thresholds);
- 	}
- 	else 
- 		bucket = 1;
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
