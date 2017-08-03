@@ -154,10 +154,10 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	ArrayType 	*state = PG_ARGISNULL(0) ? NULL : PG_GETARG_ARRAYTYPE_P(0);
 	Datum 		*elems; 
 
-	Datum 	val = PG_ARGISNULL(1) ? NULL : PG_GETARG_DATUM(1);
+	Datum 	val = PG_GETARG_DATUM(1);
 	// float 		val = PG_GETARG_FLOAT4(1); // DATUM? see postgres docs
 	// ArrayType 	*thresholds = PG_GETARG_ARRAYTYPE_P(2);
-	Datum 	thresholds = PG_ARGISNULL(2) ? NULL : PG_GETARG_DATUM(2);
+	Datum 	thresholds = PG_GETARG_DATUM(2);
 
 	// int 	bucket = 1;
 	// int 	bucket = DirectFunctionCall2(width_bucket_array, val, PointerGetDatum(thresholds)); 
