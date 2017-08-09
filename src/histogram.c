@@ -84,7 +84,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
  	if (PG_ARGISNULL(1) || PG_ARGISNULL(2))
  		bucket = 1;
  	else
- 		bucket = DirectFunctionCall2(width_bucket_array, val, thresholds);
+ 		bucket = 2; //DirectFunctionCall2(width_bucket_array, val, thresholds);
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 	{
