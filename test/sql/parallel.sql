@@ -31,11 +31,11 @@ SELECT histogram(i, 1, 1000001, 10) FROM "test";
 EXPLAIN (costs off) SELECT histogram(i, 0,100000,5) FROM "test";
 SELECT histogram(i, 0, 100000, 5) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, array[0, 200001, 400001, 600001, 800001]) FROM "test";
-SELECT histogram(i, array[0, 200000, 400000, 600000, 800000]) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, array[0, 200001, 400002, 600003, 800004]) FROM "test";
+SELECT histogram(i, array[0, 200001, 400002, 600003, 800004]) FROM "test";
 
 EXPLAIN (costs off) SELECT histogram(i, 10,100000,2) FROM "test";
 SELECT histogram(i, 10, 100000, 5) FROM "test";
 
 EXPLAIN (costs off) SELECT histogram(i, array[10, 499996]) FROM "test";
-SELECT histogram(i, array[0, 200000, 400000, 600000, 800000]) FROM "test";
+SELECT histogram(i, array[10, 499996]) FROM "test";
