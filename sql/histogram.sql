@@ -3,7 +3,7 @@ RETURNS INTERNAL
 AS '$libdir/timescaledb', 'hist_sfunc'
 LANGUAGE C IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_sfunc_discrete (state INTERNAL, val DOUBLE PRECISION, threshold REAL[]) 
+CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_sfunc_discrete (state INTERNAL, val DOUBLE PRECISION, threshold DOUBLE PRECISION[]) 
 RETURNS INTERNAL 
 AS '$libdir/timescaledb', 'hist_sfunc_discrete'
 LANGUAGE C IMMUTABLE;
@@ -28,7 +28,7 @@ RETURNS INTEGER[]
 AS '$libdir/timescaledb', 'hist_finalfunc'
 LANGUAGE C IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_finalfunc_discrete (state INTERNAL, val DOUBLE PRECISION, threshold REAL[]) 
+CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_finalfunc_discrete (state INTERNAL, val DOUBLE PRECISION, threshold DOUBLE PRECISION[]) 
 RETURNS INTEGER[]
 AS '$libdir/timescaledb', 'hist_finalfunc'
 LANGUAGE C IMMUTABLE;
@@ -47,8 +47,8 @@ CREATE AGGREGATE histogram (DOUBLE PRECISION, REAL, REAL, INTEGER) (
 );
 
 -- Tell Postgres how to use the new function
-DROP AGGREGATE IF EXISTS histogram (DOUBLE PRECISION, REAL[]);
-CREATE AGGREGATE histogram (DOUBLE PRECISION, REAL[]) (
+DROP AGGREGATE IF EXISTS histogram (DOUBLE PRECISION, DOUBLE PRECISION[]);
+CREATE AGGREGATE histogram (DOUBLE PRECISION, DOUBLE PRECISION[]) (
     SFUNC = _timescaledb_internal.hist_sfunc_discrete,
     STYPE = INTERNAL,
     COMBINEFUNC = _timescaledb_internal.hist_combinefunc,

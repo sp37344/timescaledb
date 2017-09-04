@@ -234,7 +234,7 @@ hist_finalfunc(PG_FUNCTION_ARGS)
 	PG_RETURN_ARRAYTYPE_P(construct_md_array(hist, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'));
 }
 
-/* hist_funalfunc_discrete(internal, val DOUBLE PRECISION, threshold REAL[]) => INTEGER[] */
+/* hist_funalfunc_discrete(internal, val DOUBLE PRECISION, threshold DOUBLE PRECISION[]) => INTEGER[] */
 Datum
 hist_finalfunc_discrete(PG_FUNCTION_ARGS)
 {
