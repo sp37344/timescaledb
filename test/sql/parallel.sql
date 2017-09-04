@@ -34,5 +34,5 @@ SELECT histogram(i, 10, 100000, 5) FROM "test";
 EXPLAIN (costs off) SELECT histogram(i, array[10, 500000]) FROM "test";
 SELECT histogram(i, array[10, 500000]) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, array[0, 200000, 500000]) FROM "test";
-SELECT histogram(i, array[0, 200000, 500000]) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, array[0, 200000, 500001]) FROM "test";
+SELECT histogram(i, array[0, 200000, 500001]) FROM "test";

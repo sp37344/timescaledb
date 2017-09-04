@@ -30,7 +30,7 @@ LANGUAGE C IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_finalfunc_discrete (state INTERNAL, val DOUBLE PRECISION, threshold DOUBLE PRECISION[]) 
 RETURNS INTEGER[]
-AS '$libdir/timescaledb', 'hist_finalfunc'
+AS '$libdir/timescaledb', 'hist_finalfunc_discrete'
 LANGUAGE C IMMUTABLE;
 
 -- Tell Postgres how to use the new function
