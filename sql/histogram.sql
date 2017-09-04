@@ -51,9 +51,9 @@ DROP AGGREGATE IF EXISTS histogram (DOUBLE PRECISION, DOUBLE PRECISION[]);
 CREATE AGGREGATE histogram (DOUBLE PRECISION, DOUBLE PRECISION[]) (
     SFUNC = _timescaledb_internal.hist_sfunc_discrete,
     STYPE = INTERNAL,
-    COMBINEFUNC = _timescaledb_internal.hist_combinefunc,
-    SERIALFUNC = _timescaledb_internal.hist_serializefunc,
-    DESERIALFUNC = _timescaledb_internal.hist_deserializefunc,
+    -- COMBINEFUNC = _timescaledb_internal.hist_combinefunc,
+    -- SERIALFUNC = _timescaledb_internal.hist_serializefunc,
+    -- DESERIALFUNC = _timescaledb_internal.hist_deserializefunc,
     PARALLEL = SAFE,
     FINALFUNC = _timescaledb_internal.hist_finalfunc_discrete,
     FINALFUNC_EXTRA
