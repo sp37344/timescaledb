@@ -74,7 +74,7 @@ hist_sfunc(PG_FUNCTION_ARGS)
 
 /* histogram(state, val, threshold) */
 Datum
-hist_sfunc(PG_FUNCTION_ARGS)
+hist_sfunc_discrete(PG_FUNCTION_ARGS)
 {
 	MemoryContext aggcontext;
 	bytea	   *state = (PG_ARGISNULL(0) ? NULL : PG_GETARG_BYTEA_P(0));
