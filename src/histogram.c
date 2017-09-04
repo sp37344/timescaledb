@@ -27,7 +27,7 @@ PG_FUNCTION_INFO_V1(hist_combinefunc);
 PG_FUNCTION_INFO_V1(hist_serializefunc);
 PG_FUNCTION_INFO_V1(hist_deserializefunc);
 PG_FUNCTION_INFO_V1(hist_finalfunc);
-PG_FUNCTION_INFO_V1(hist_finalfunc_discrete);
+// PG_FUNCTION_INFO_V1(hist_finalfunc_discrete);
 
 /* histogram(state, val, min, max, nbuckets) */
 Datum
@@ -234,28 +234,28 @@ hist_finalfunc(PG_FUNCTION_ARGS)
 }
 
 /* hist_funalfunc_discrete(internal, val DOUBLE PRECISION, threshold DOUBLE PRECISION[]) => INTEGER[] */
-Datum
-hist_finalfunc_discrete(PG_FUNCTION_ARGS)
-{
-	bytea	   *state;
-	Datum	   *hist;
-	int			dims[1];
-	int			lbs[1];
+// Datum
+// hist_finalfunc_discrete(PG_FUNCTION_ARGS)
+// {
+// 	bytea	   *state;
+// 	Datum	   *hist;
+// 	int			dims[1];
+// 	int			lbs[1];
 
-	if (!AggCheckCallContext(fcinfo, NULL))
-	{
-		/* cannot be called directly because of internal-type argument */
-		elog(ERROR, "hist_finalfunc called in non-aggregate context");
-	}
+// 	if (!AggCheckCallContext(fcinfo, NULL))
+// 	{
+// 		/* cannot be called directly because of internal-type argument */
+// 		elog(ERROR, "hist_finalfunc called in non-aggregate context");
+// 	}
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+// 	if (PG_ARGISNULL(0))
+// 		PG_RETURN_NULL();
 
-	state = PG_GETARG_BYTEA_P(0);
-	hist = (Datum *) VARDATA(state);
+// 	state = PG_GETARG_BYTEA_P(0);
+// 	hist = (Datum *) VARDATA(state);
 
-	dims[0] = HIST_LEN(state);
-	lbs[0] = 1;
+// 	dims[0] = HIST_LEN(state);
+// 	lbs[0] = 1;
 
-	PG_RETURN_ARRAYTYPE_P(construct_md_array(hist, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'));
-}
+// 	PG_RETURN_ARRAYTYPE_P(construct_md_array(hist, NULL, 1, dims, lbs, INT4OID, 4, true, 'i'));
+// }
