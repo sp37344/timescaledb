@@ -96,7 +96,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	if (state == NULL)
 	{
 		/* Allocate memory to a new histogram state array */
-		Size		arrsize = sizeof(Datum) * (nbuckets + 2); /* CHANGE */
+		Size		arrsize = sizeof(Datum) * (nbuckets + 1);
 
 		state = MemoryContextAllocZero(aggcontext, VARHDRSZ + arrsize);
 		SET_VARSIZE(state, VARHDRSZ + arrsize);
