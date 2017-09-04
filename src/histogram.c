@@ -83,8 +83,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	float		val = PG_GETARG_DATUM(1);
 	Datum 		threshold = PG_GETARG_DATUM(2);
 
-	int 		nbuckets =  DirectFunctionCall2(array_upper, threshold, 1);
-	// int			bucket = DirectFunctionCall4(width_bucket_float8, val, min, max, nbuckets);
+	int 		nbuckets =  DirectFunctionCall2(array_length, threshold, 1);
 	int 		bucket = DirectFunctionCall2(width_bucket_array, val, threshold); 
 
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
