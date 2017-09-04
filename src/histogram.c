@@ -93,12 +93,6 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 		elog(ERROR, "hist_sfunc called in non-aggregate context");
 	}
 
-	if (min > max)
-	{
-		/* cannot generate a histogram with incompatible bounds */
-		elog(ERROR, "lower bound cannot exceed upper bound");
-	}
-
 	if (state == NULL)
 	{
 		/* Allocate memory to a new histogram state array */
