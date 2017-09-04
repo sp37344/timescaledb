@@ -30,7 +30,7 @@ LANGUAGE C IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION _timescaledb_internal.hist_finalfunc_discrete (state INTERNAL, val DOUBLE PRECISION, threshold DOUBLE PRECISION[]) 
 RETURNS INTEGER[]
-AS '$libdir/timescaledb', 'hist_finalfunc_discrete'
+AS '$libdir/timescaledb', 'hist_finalfunc'
 LANGUAGE C IMMUTABLE;
 
 -- Tell Postgres how to use the new function
@@ -55,6 +55,6 @@ CREATE AGGREGATE histogram (DOUBLE PRECISION, DOUBLE PRECISION[]) (
     SERIALFUNC = _timescaledb_internal.hist_serializefunc,
     DESERIALFUNC = _timescaledb_internal.hist_deserializefunc,
     PARALLEL = SAFE,
-    FINALFUNC = _timescaledb_internal.hist_finalfunc_discrete,
+    FINALFUNC = _timescaledb_internal.hist_finalfunc,
     FINALFUNC_EXTRA
 );
