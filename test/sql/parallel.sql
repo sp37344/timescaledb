@@ -22,23 +22,20 @@ SELECT time_bucket('1 second', ts) sec, last(i, j) FROM "test" GROUP BY sec ORDE
 EXPLAIN (costs off) SELECT histogram(i, 1, 1000000, 2) FROM "test";
 SELECT histogram(i, 1, 1000000, 2) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, array[0, 500000]) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, array[1, 500002]) FROM "test";
 SELECT histogram(i, array[0, 500000]) FROM "test";
 
 EXPLAIN (costs off) SELECT histogram(i, 1,1000001,10) FROM "test";
 SELECT histogram(i, 1, 1000001, 10) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, array[0, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000]) FROM "test";
-SELECT histogram(i, array[0, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000]) FROM "test";
-
 EXPLAIN (costs off) SELECT histogram(i, 0,100000,5) FROM "test";
 SELECT histogram(i, 0, 100000, 5) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, array[0, 200000, 400000, 600000, 800000]) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, array[0, 200001, 400001, 600001, 800001]) FROM "test";
 SELECT histogram(i, array[0, 200000, 400000, 600000, 800000]) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, 10,100000,5) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, 10,100000,2) FROM "test";
 SELECT histogram(i, 10, 100000, 5) FROM "test";
 
-EXPLAIN (costs off) SELECT histogram(i, array[10, 200000, 400000, 600000, 800000]) FROM "test";
+EXPLAIN (costs off) SELECT histogram(i, array[10, 499996]) FROM "test";
 SELECT histogram(i, array[0, 200000, 400000, 600000, 800000]) FROM "test";
