@@ -81,7 +81,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	Datum	   *hist;
 
 	float		val = PG_GETARG_DATUM(1);
-	Datum 		threshold = PG_GETARG_DATUM(2);
+	Datum 		threshold = PG_GETARG_ARRAYTYPE_P(2);
 
 	int 		nbuckets =  DirectFunctionCall2(array_length, threshold, 1);
 	int 		bucket = DirectFunctionCall2(width_bucket_array, val, threshold); 
@@ -95,7 +95,7 @@ hist_sfunc_discrete(PG_FUNCTION_ARGS)
 	if (state == NULL)
 	{
 		/* Allocate memory to a new histogram state array */
-		Size		arrsize = sizeof(Datum) * (nbuckets + 2);
+		Size		arrsize = sizeof(Datum) * (nbuckets + 1);
 
 		state = MemoryContextAllocZero(aggcontext, VARHDRSZ + arrsize);
 		SET_VARSIZE(state, VARHDRSZ + arrsize);
